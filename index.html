@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>For You ❤️</title>
+
+  <style>
+    body {
+      background: pink;
+      font-family: Arial;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    .card {
+      background: white;
+      width: 320px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 16px;
+      background: #ff4d6d;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card" id="card">
+    <h2>Question 1 💌</h2>
+    <p>What do I love the most about you?</p>
+
+    <button onclick="next(1)">Your smile 😍</button>
+    <button onclick="next(2)">Your care 💕</button>
+    <button onclick="next(3)">Everything about you 🥰</button>
+  </div>
+
+  <script>
+const questions = [
+  {
+    q: "Where did we first meet?",
+    options: [
+      "At work 💼",
+      "At home 🏠",
+      "In my heart ❤️",
+      "Somewhere unforgettable ✨"
+    ]
+  },
+  {
+    q: "What makes me happiest?",
+    options: [
+      "Your smile 😊",
+      "Your words 💬",
+      "Your love ❤️",
+      "All of the above 💯"
+    ]
+  },
+  {
+    q: "What is our superpower?",
+    options: [
+      "Love ❤️",
+      "Faith 🙏",
+      "Our Emotions to each other💞",
+      "Everything together 🫶"
+    ]
+  },
+  {
+    q: "What is the most important day of our life?",
+    options: [
+      "The day met 💖",
+      "The day we spoke ☎️",
+      "The day we fought 😤",
+      "The day we knew we love each other❤️‍🔥"
+    ]
+  },
+  {
+    q: "Which is this place we took the photo?",
+    image: "ques5.jpeg",
+    input: true
+  },
+  {
+    q: "Do you still love me when I eat your favourite food?",
+    options: [
+      "Yes 😘",
+      "No, I always love you not that food 😂"
+    ]
+  },
+  {
+    q: "Which moment made you think, ‘Okay, I’m definitely in trouble now’?",
+    options: [
+      "The first deep conversation 💬",
+      "When you fell and still deny it 😉",
+      "The first time you missed me badly 💔"
+    ]
+  },
+  {
+    q: "Our most unforgettable event is:",
+    options: [
+      "When we travelled to new place secretly 🧳",
+      "When you realized I’m impossible to ignore 😌",
+      "When we got closer faster than planned ❤️‍🔥",
+      "Honestly… all my fault 😏"
+    ]
+  },
+  {
+    q: "Will you be my valentine forever?",
+    tease: true
+  }
+];
+
+let index = 0;
+let answers = [];
+
+function showQuestion() {
+  const q = questions[index];
+  let html = `<h2>Question ${index + 1}</h2><p>${q.q}</p>`;
+
+  if (q.image) {
+    html += `<img src="${q.image}" style="width:90%;border-radius:15px;margin:10px 0;">`;
+  }
+
+  if (q.input) {
+    html += `
+      <input id="textAnswer" placeholder="Enter the answer"
+        style="width:90%;padding:10px;border-radius:10px;">
+      <br><br>
+      <button onclick="saveText()">Next</button>
+    `;
+  }
+  else if (q.tease) {
+    html += `
+      <button onclick="next('Yes ❤️')">Yes ❤️</button>
+      <button id="noBtn"
+        style="
+          position:absolute;
+          width:65px;
+          height:26px;
+          font-size:11px;
+          padding:2px;
+          cursor:default;
+        ">
+        No 😜
+      </button>
+    `;
+  }
+  else {
+    q.options.forEach(opt => {
+      html += `<button onclick="next('${opt}')">${opt}</button>`;
+    });
+  }
+
+  document.getElementById("card").innerHTML = html;
+
+  // tease movement
+  const noBtn = document.getElementById("noBtn");
+  if (noBtn) {
+    noBtn.onmouseenter = () => {
+      const x = Math.random() * 80 - 40;
+      const y = Math.random() * 80 - 40;
+      noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    };
+    noBtn.onclick = () => false;
+  }
+}
+
+function next(ans) {
+  answers.push({ q: questions[index].q, a: ans });
+  index++;
+  index < questions.length ? showQuestion() : showCorrect();
+}
+
+function saveText() {
+  const val = document.getElementById("textAnswer").value || "No answer";
+  answers.push({ q: questions[index].q, a: val });
+  index++;
+  index < questions.length ? showQuestion() : showCorrect();
+}
+
+function showCorrect() {
+  document.getElementById("card").innerHTML = `
+    <h2>Correct 💖</h2>
+    <p>No matter what you chose… I love you ❤️</p>
+    <button onclick="showFinal()">Next</button>
+  `;
+}
+
+function showFinal() {
+  let html = `
+    <h2>Happy Valentine’s Day 💘</h2>
+    <p><b>You are my favorite person.</b> ❤️</p>
+    <img src="final.jpeg" style="width:90%;border-radius:20px;margin:10px 0;">
+
+    <h3>Your Answers 💖</h3>
+  `;
+
+  let mailText = "My Valentine Answers 💖\n\n";
+
+  answers.forEach((item, i) => {
+    html += `<p><b>Q${i + 1}:</b> ${item.q}<br>❤️ ${item.a}</p>`;
+    mailText += `Q${i + 1}: ${item.q}\nAnswer: ${item.a}\n\n`;
+  });
+
+  const mailLink =
+    "mailto:koushikmgupta@gmail.com" +
+    "?subject=My Valentine Answers 💖" +
+    "&body=" + encodeURIComponent(mailText);
+
+  html += `
+    <br>
+    <button onclick="window.location.href='${mailLink}'">
+      Send my answers ❤️
+    </button>
+  `;
+
+  document.getElementById("card").innerHTML = html;
+}
+
+showQuestion();
+</script>
